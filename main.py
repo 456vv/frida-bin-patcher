@@ -1,17 +1,18 @@
 import sys
-sys.path.append("..")
+sys.path.append("./src")
 
 import argparse
 import os
 from patchagent import Patcher
 from pathlib import Path
+import random
 
 class Main:
     parser = argparse.ArgumentParser()
     parser.add_argument('-i','--input', type=str, nargs='?', help='location of frida binary to patch (server or gadget)')
     parser.add_argument('-o','--output', type=str, default="", help='output location for new binary')
     parser.add_argument('-v','--verify', action="store_true", help='enable verification')
-    parser.add_argument('-s','--seed', type=int, default=1, help='random seed')
+    parser.add_argument('-s','--seed', type=int, default=1656, help='random seed, can be frida vresion 1656')
     parser.add_argument('-r','--recover',action="store_true", help='recover')
 
     args = parser.parse_args()
@@ -26,14 +27,16 @@ class Main:
                 output = input
                 input = output_
             if os.path.exists(output):
-                os.remove(input)
+                if os.path.exists(input):
+                    os.remove(input)
                 output_ = output
                 output = input
                 input = output_
 
         patcher = Patcher()
         if patcher.check_path(input):
-            patcher.initiate_patching_process(patcher, input, output, args.seed)
+            random.seed(args.seed)
+            patcher.initiate_patching_process(patcher, input, output)
 
         if args.verify:
             Patcher.verify_patched_binary(patcher, output)

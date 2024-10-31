@@ -3,10 +3,28 @@ import lief
 import random
 import os
 import sys
+import json
+import string
 
 class Patcher:
     ELF_MAGIC_MAIN = "7F 45 4C 46 "
     exclusions = ["_frida"]
+
+    @staticmethod
+    def load_json_as_map(filepath):
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return data
+        except FileNotFoundError:
+            print(f"Error: File not found: {filepath}")
+            return None
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
+            return None
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return None
 
     @staticmethod
     def verify_patched_binary(self, path):
@@ -56,8 +74,7 @@ class Patcher:
 
     @staticmethod
     def generate_name(length):
-        chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
-        return ''.join(random.choice(chars) for _ in range(length))
+        return "".join(random.sample(string.ascii_lowercase+string.ascii_uppercase, length))
 
     @staticmethod
     def do_patch(self, binary, replacer, replacee="", startpos = 0, endpos = 0):
@@ -100,7 +117,7 @@ class Patcher:
         return False
         
     @staticmethod
-    def initiate_patching_process(self, path, outpath, seed):
+    def initiate_patching_process(self, path, outpath):
         with open(path, 'rb') as f:
             binary = bytearray(f.read())
             
@@ -108,24 +125,11 @@ class Patcher:
             self.exclusions.append(binary.index(b'/System/Library/Caches/') + len('/System'))
         except:
             pass
+        
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        frida_strings_to_patch = self.load_json_as_map(current_directory+"/filter.json")
 
-        frida_strings_to_patch = {
-            "linjector":"",
-            "gmain":"",
-            "gum-js":"",
-            "gdbus":"gdbus",
-            "frida-gum":"",
-            "frida-helper":"",
-            "frida-agent":"",
-            "frida-gadget":"",
-            "pool-frida":"",
-            "frida:rpc":"ABCDE:rpc",
-            "\"frida\"":"\"ABCDE\"",
-        }
-
-        random.seed(seed)
-        for key in frida_strings_to_patch.keys():
-            val = frida_strings_to_patch.get(key)
+        for key, val in frida_strings_to_patch.items():
             if key != val:
                 if val == "" :
                     val = self.generate_name(len(key))

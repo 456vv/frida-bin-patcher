@@ -1,0 +1,14 @@
+{
+    "LIBFRIDA":"",
+    "linjector":"",
+    "gmain":"",
+    "gum-js":"",
+    "gdbus":"",
+    "frida-gum":"",
+    "frida-helper":"",
+    "frida-agent":"",
+    "frida-gadget":"",
+    "pool-frida":"",
+    "frida:rpc":"",
+    "\"frida\"":"\"frida\""
+}
