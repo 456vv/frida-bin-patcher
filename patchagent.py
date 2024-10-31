@@ -6,7 +6,7 @@ import sys
 
 class Patcher:
     ELF_MAGIC_MAIN = "7F 45 4C 46 "
-    exclusions = []
+    exclusions = ["_frida"]
 
     @staticmethod
     def verify_patched_binary(self, path):
@@ -56,7 +56,7 @@ class Patcher:
 
     @staticmethod
     def generate_name(length):
-        chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
         return ''.join(random.choice(chars) for _ in range(length))
 
     @staticmethod
@@ -79,12 +79,19 @@ class Patcher:
             try:
                 index = binary.index(match, cur_index)
                 cur_index = index + 1
-                if index in self.exclusions:
+                range =binary[index - 10 : 10 + index + length]
+                pos = -1
+                for key in self.exclusions:
+                    pos = range.find(key.encode('utf8'))
+                    if pos >= 0:
+                        break
+                if pos >= 0:
                     continue
+                print("[*] patching: " + replacer + " at: " + str(hex(index)) + " with: " + val.decode("utf8")+ " range: " + str(range.decode("utf-8")))
+                binary[index + startpos : index + length - endpos] = val
             except:
                 break
-            binary[index + startpos : index + length - endpos] = val
-            print("[*] patching: " + replacer + " at: " + str(hex(index)) + " with: " + val.decode("utf8"))
+                
 
     @staticmethod
     def check_path(binarypath):
@@ -93,7 +100,7 @@ class Patcher:
         return False
         
     @staticmethod
-    def initiate_patching_process(self, path, outpath):
+    def initiate_patching_process(self, path, outpath, seed):
         with open(path, 'rb') as f:
             binary = bytearray(f.read())
             
@@ -102,31 +109,28 @@ class Patcher:
         except:
             pass
 
-        frida_strings_to_patch = [
-            "linjector",
-            "gmain",
-            "gum-js-loop",
-            "re.frida.server",
-            "frida-helper",
-            "gdbus",
-            "frida-agent",
-            "pipe-",
-            "GADGET",
-            "gadget.so",
-            "FRIDA",
-            "AGENT",
-            "frida-",
-            "frida-agent-32.so",
-            "frida-server",
-            "frida-agent-64.so",
-            "frida"
-        ]
+        frida_strings_to_patch = {
+            "linjector":"",
+            "gmain":"",
+            "gum-js":"",
+            "gdbus":"gdbus",
+            "frida-gum":"",
+            "frida-helper":"",
+            "frida-agent":"",
+            "frida-gadget":"",
+            "pool-frida":"",
+            "frida:rpc":"ABCDE:rpc",
+            "\"frida\"":"\"ABCDE\"",
+        }
 
-        for value in frida_strings_to_patch:
-            self.do_patch(self, binary, value)
-            time.sleep(0.2)
-    
-        self.do_patch(self, binary, '\"frida\"', startpos=1, endpos=1)
+        random.seed(seed)
+        for key in frida_strings_to_patch.keys():
+            val = frida_strings_to_patch.get(key)
+            if key != val:
+                if val == "" :
+                    val = self.generate_name(len(key))
+                self.do_patch(self, binary, key, val)
+                time.sleep(0.2)
 
         with open(outpath, 'wb') as f:
             f.write(binary)

@@ -25,9 +25,9 @@ pip install -r requirements.txt
 # How to use
 Use the following command to patch a stock frida binary.
 ```bash
-python main.py --binarypath bin/stock/<frida-binary> --output bin/patched/<output-path>
+python main.py --input bin/stock/<frida-binary> --output bin/patched/<output-path>
 ```
 If you want to use the export verification system, use the following command.
 ```bash
-python main.py --binarypath bin/stock/<frida-binary> --output bin/patched/<output-path> --verify
+python main.py --input bin/stock/<frida-binary> --output bin/patched/<output-path> --verify
 ```
