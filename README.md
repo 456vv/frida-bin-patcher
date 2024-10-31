@@ -4,7 +4,7 @@ Frida Patcher 是专为 Frida 二进制文件设计的修补程序系统，以�
 
 # 特征
 - 补丁后程序可能卡到黑屏/无反应/死机。
-- 有关过滤关键字需要在filter.json文件中设置。filter.jso中的值是【空】表示生成随机符，否则自定义。
+- 过滤关键字需要在filter.json文件中设置。filter.jso中的值是【空】表示生成随机符，否则自定义。
 - 你还可以使用patch方式：https://github.com/456vv/Florida
 
 # 先决条件
