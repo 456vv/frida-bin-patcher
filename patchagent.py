@@ -8,6 +8,7 @@ import json
 import string
 
 class Patcher:
+	random_seed = 0
 	ELF_MAGIC_MAIN = "7F 45	4C 46 "
 	exclusions = []
 
@@ -74,7 +75,8 @@ class Patcher:
 		return 0
 
 	@staticmethod
-	def	generate_name(length):
+	def	generate_name(self, length):
+		random.seed(self.random_seed)
 		return "".join(random.sample(string.ascii_lowercase+string.ascii_uppercase,	length))
 
 	@staticmethod
@@ -82,10 +84,10 @@ class Patcher:
 		_key =	key.encode('utf8')
 		_key_length = len(_key)
 		if val	== '':
-			val	= self.generate_name(_key_length).encode('utf8')[startpos:]
+			val	= self.generate_name(self, _key_length).encode('utf8')[startpos:]
 		else:
 			for i in re.compile(r'#R(\d+)').findall(val):
-				val = val.replace(f"#R"+i, self.generate_name(int(i)))
+				val = val.replace(f"#R"+i, self.generate_name(self, int(i)))
 			val	= val.encode('utf8')[startpos:]
 			if len(val)	> _key_length:
 				raise Exception('[!] input length is higher	than required')
@@ -138,7 +140,7 @@ class Patcher:
 		for	key, val in	frida_strings_to_patch.items():
 			if key != val:
 				if val == "" :
-					val	= self.generate_name(len(key))
+					val	= self.generate_name(self, len(key))
 				self.do_patch(self,	binary,	key, val, frida_strings_exclude)
 				time.sleep(0.2)
 

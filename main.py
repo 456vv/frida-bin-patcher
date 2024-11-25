@@ -37,7 +37,7 @@ class Main:
 
         patcher = Patcher()
         if patcher.check_path(input):
-            random.seed(args.seed)
+            patcher.random_seed = args.seed
             patcher.initiate_patching_process(patcher, input, output, filter, exclude)
 
         if args.verify:
