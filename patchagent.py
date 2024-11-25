@@ -110,7 +110,7 @@ class Patcher:
 							break
 				if pos >= 0:
 					continue
-				print("[*] patching: " + key +	" at: "	+ str(hex(index)) +	" with:	" +	val.decode("utf8")+	" range: " + str(range.decode("utf-8")))
+				print("[*] patching: " + key + " at: " + str(hex(index)) +	" with: " +	val.decode("utf8")+	" find: " + str(range.decode("utf-8")))
 				binary[index + startpos	: index	+ _key_length - endpos] = val
 			except:
 				break
