@@ -4,7 +4,7 @@ Frida Patcher 是专为 Frida 二进制文件设计的修补程序系统，以�
 
 # 说明
 - 补丁后程序可能卡到黑屏/无反应/死机。
-- 过滤关键字需要在filter.json文件中设置。filter.jso中的值是【空】表示生成随机符，否则自定义。其中#R5表示生成5个随机字符。
+- 过滤关键字需要在filter_xxx.json文件中设置。filter_xxx.json中的值是【空】表示生成随机符，否则自定义。其中#R5表示生成5个随机字符。
 - 需要替换 frida:rpc 字符在这个路径：Python/Lib/site-packages/frida
 - 你还可以使用patch方式：https://github.com/456vv/Florida
 
