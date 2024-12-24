@@ -29,7 +29,9 @@ pip install -r requirements.txt -t src
 ```bash
 python main.py --input bin/frida-server --output bin/patched/frida-server --filter filter_elf.json --seed 1659
 python main.py --input /Python/Lib/site-packages/frida  --filter filter_py.json --seed 1659
-
+```
+```bash
+hexreplace.exe -input bin/frida-server -output bin/patched/frida-server -filter filter-elf.json -seed 1659
 ```
 如果要使用导出验证系统，请使用以下命令。
 ```bash

@@ -7,8 +7,19 @@ import sys
 import json
 import string
 
+class SimpleLCG:
+	def	__init__(self, seed=None):
+		self.m = 4294967296	 # 2^32
+		self.a = 1664525
+		self.c = 1013904223
+		self.state = seed if seed is not None else int(random.random() * self.m)
+
+	def	next(self):
+		self.state = (self.a * self.state +	self.c)	% self.m
+		return self.state /	self.m
+
 class Patcher:
-	random_seed = 0
+	random_seed	= 0
 	ELF_MAGIC_MAIN = "7F 45	4C 46 "
 	exclusions = []
 
@@ -75,19 +86,24 @@ class Patcher:
 		return 0
 
 	@staticmethod
-	def	generate_name(self, length):
-		random.seed(self.random_seed)
-		return "".join(random.sample(string.ascii_lowercase+string.ascii_uppercase,	length))
+	def	generate_name(self,	length):
+		char_set = string.ascii_lowercase +	string.ascii_uppercase
+		random_string =	""
+		rng	= SimpleLCG(self.random_seed)
+		for	i in range(length):
+			k =	int(rng.next() * len(char_set))
+			random_string += char_set[k]
+		return random_string
 
 	@staticmethod
-	def	do_patch(self, binary, key, val="", excludes={}, startpos = 0, endpos = 0):
+	def	do_patch(self, binary, key,	val="",	excludes={}, startpos =	0, endpos =	0):
 		_key =	key.encode('utf8')
-		_key_length = len(_key)
+		_key_length	= len(_key)
 		if val	== '':
 			val	= self.generate_name(self, _key_length).encode('utf8')[startpos:]
 		else:
-			for i in re.compile(r'#R(\d+)').findall(val):
-				val = val.replace(f"#R"+i, self.generate_name(self, int(i)))
+			for	i in re.compile(r'#R(\d+)').findall(val):
+				val	= val.replace(f"#R"+i, self.generate_name(self,	int(i)))
 			val	= val.encode('utf8')[startpos:]
 			if len(val)	> _key_length:
 				raise Exception('[!] input length is higher	than required')
@@ -103,15 +119,15 @@ class Patcher:
 				cur_index =	index +	1
 				range =binary[index	- 20 : 20 +	index +	_key_length]
 				pos	= -1
-				if	key in excludes:
-					for e_val in excludes[key]:
+				if	key	in excludes:
+					for	e_val in excludes[key]:
 						pos	= range.find(e_val.encode('utf8'))
 						if pos >= 0:
 							break
 				if pos >= 0:
 					continue
-				print("[*] patching: " + key + " at: " + str(hex(index)) +	" with: " +	val.decode("utf8")+	" find: " + str(range.decode("utf-8")))
-				binary[index + startpos	: index	+ _key_length - endpos] = val
+				print("[*] patching: " + key + " at: " + str(hex(index)) +	" with:	" +	val.decode("utf8")+	" find:	" +	str(range.decode("utf-8")))
+				binary[index + startpos	: index	+ _key_length -	endpos]	= val
 			except:
 				break
 				
@@ -133,8 +149,8 @@ class Patcher:
 			pass
 		
 		current_directory =	os.path.dirname(os.path.abspath(__file__))
-		filter_path = filter if filter != "" else current_directory+"/filter.json"
-		exclude_path = exclude if exclude != "" else current_directory+"/exclude.json"
+		filter_path	= filter if	filter != "" else current_directory+"/filter.json"
+		exclude_path = exclude if exclude != ""	else current_directory+"/exclude.json"
 		frida_strings_to_patch = self.load_json_as_map(filter_path)
 		frida_strings_exclude =	self.load_json_as_map(exclude_path)
 		for	key, val in	frida_strings_to_patch.items():

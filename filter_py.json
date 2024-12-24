@@ -1,5 +1,3 @@
 {
     "frida:rpc":"#R5:rpc",
-    "6769746875622e636f6d2f6672696461":"6769746875622e636f6d2f1234567890",
-    "frida_agent_main":"#R5_agent_main"
  }

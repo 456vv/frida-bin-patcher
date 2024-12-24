@@ -1,0 +1,10 @@
+[{
+    "section_name": ".rodata",
+    "items":[
+        {"old":"frida:rpc", "new":"#R5:rpc"}
+    ]
+},{
+    "section_name": ".text",
+    "items":[
+    ]
+}]
