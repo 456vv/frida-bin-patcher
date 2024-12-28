@@ -1,5 +1,5 @@
 { 
-    "frida:rpc":"#R5:rpc",
+    "\"frida:rpc\"":"\"#R5:rpc\""
     "gmain":"gmain",
     "gum-js-loop":"gum-js-loop",
 }
