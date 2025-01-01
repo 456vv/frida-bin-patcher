@@ -86,24 +86,37 @@ class Patcher:
 		return 0
 
 	@staticmethod
-	def	generate_name(self,	length):
+	def generate_name(self, length, slat):
 		char_set = string.ascii_lowercase +	string.ascii_uppercase
-		random_string =	""
-		rng	= SimpleLCG(self.random_seed)
-		for	i in range(length):
-			k =	int(rng.next() * len(char_set))
-			random_string += char_set[k]
-		return random_string
+		l = len(char_set)
+		result = bytearray()
+		rng = SimpleLCG(self.random_seed)
+		start = 0
+
+		for _ in range(length):
+			k = int(rng.next() * l)
+			if slat:
+				if start >= len(slat):
+					start = 0
+				k = (k ^ ord(slat[start])) % l
+				start += 1
+			result.append(ord(char_set[k]))
+
+		return result.decode('utf-8')
 
 	@staticmethod
 	def	do_patch(self, binary, key,	val="",	excludes={}, startpos =	0, endpos =	0):
 		_key =	key.encode('utf8')
 		_key_length	= len(_key)
 		if val	== '':
-			val	= self.generate_name(self, _key_length).encode('utf8')[startpos:]
+			val = bytearray(self.generate_name(self, _key_length, key), "utf-8")[startpos:]
+			if key[0] ==	'\u0000':
+				val[0] = 0x0
+			if key[len(key) - 1] ==	'\u0000':
+				val[len(val) - 1] = 0x0
 		else:
 			for	i in re.compile(r'#R(\d+)').findall(val):
-				val	= val.replace(f"#R"+i, self.generate_name(self,	int(i)))
+				val	= val.replace(f"#R"+i, self.generate_name(self,	int(i), ""))
 			val	= val.encode('utf8')[startpos:]
 			if len(val)	> _key_length:
 				raise Exception('[!] input length is higher	than required')
@@ -155,8 +168,6 @@ class Patcher:
 		frida_strings_exclude =	self.load_json_as_map(exclude_path)
 		for	key, val in	frida_strings_to_patch.items():
 			if key != val:
-				if val == "" :
-					val	= self.generate_name(self, len(key))
 				self.do_patch(self,	binary,	key, val, frida_strings_exclude)
 				time.sleep(0.2)
 

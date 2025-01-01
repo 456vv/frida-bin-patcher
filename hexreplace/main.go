@@ -469,13 +469,21 @@ func buildReplacements(filter string) ([]Replacements, error) {
 	return rem, nil
 }
 
-func generateRandomString(length int, seed int64, charSet string) string {
+func generateRandomBytes(length int, seed int64, charSet string, slat string) []byte {
 	l := len(charSet)
-	var result string
+	var result []byte
 	rng := NewSimpleLCG(seed)
+	var start int
 	for range length {
 		k := int(rng.Next() * float64(l))
-		result += string(charSet[k])
+		if slat != "" {
+			if start > len(slat) {
+				start = 0
+			}
+			k = (k ^ int(slat[start])) % l
+			start++
+		}
+		result = append(result, charSet[k])
 	}
 	return result
 }
@@ -488,27 +496,41 @@ func replaceInSection(name string, data []byte, replacements []*Replacement) []b
 	counter := 0
 	for _, replacement := range replacements {
 		regx := regexp.MustCompile(`#R(\d+)`)
-		replacement.New = regx.ReplaceAllStringFunc(replacement.New, func(a string) string {
-			l, _ := strconv.Atoi(a[2:])
-			return generateRandomString(l, *fseed, charSet)
-		})
+		var (
+			err      error
+			oldStr   = replacement.Old
+			newStr   = replacement.New
+			oldBytes = []byte(oldStr)
+			newBytes = []byte(newStr)
+		)
 
-		oldBytes := []byte(replacement.Old)
-		newBytes := []byte(replacement.New)
-		var err error
-
-		if strings.HasPrefix(replacement.Old, "base64:") {
-			oldBytes, err = base64.StdEncoding.DecodeString(replacement.Old[7:])
+		if strings.HasPrefix(oldStr, "base64:") {
+			oldBytes, err = base64.StdEncoding.DecodeString(oldStr[7:])
 			if err != nil {
-				fmt.Printf("(%s) parse error %v", replacement.Old, err)
+				fmt.Printf("(%s) parse error %v", oldStr, err)
 				continue
 			}
 		}
-		if strings.HasPrefix(replacement.New, "base64:") {
-			newBytes, err = base64.StdEncoding.DecodeString(replacement.New[7:])
+		if strings.HasPrefix(newStr, "base64:") {
+			newBytes, err = base64.StdEncoding.DecodeString(newStr[7:])
 			if err != nil {
-				fmt.Printf("(%s) parse error %v", replacement.New, err)
+				fmt.Printf("(%s) parse error %v", newStr, err)
 				continue
+			}
+		} else {
+			if newStr == "" {
+				newBytes = generateRandomBytes(len(oldStr), *fseed, charSet, oldStr)
+				if oldStr[0] == '\u0000' {
+					newBytes[0] = 0x0
+				}
+				if oldStr[len(oldStr)-1] == '\u0000' {
+					newBytes[len(newBytes)-1] = 0x0
+				}
+			} else {
+				newBytes = []byte(regx.ReplaceAllStringFunc(newStr, func(a string) string {
+					l, _ := strconv.Atoi(a[2:])
+					return string(generateRandomBytes(l, *fseed, charSet, ""))
+				}))
 			}
 		}
 

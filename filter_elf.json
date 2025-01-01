@@ -1,6 +1,7 @@
 { 
-    "\"frida:rpc\"":"\"#R5:rpc\""
-    "gmain":"gmain",
-    "gum-js-loop":"gum-js-loop",
+    "\"frida:rpc\"":"\"#R5:rpc\"",
+    "\u0000gmain\u0000":"",
+    "\u0000gum-js-loop\u0000":"",
+    "\u0000gdbus\u0000":""
 }
 
