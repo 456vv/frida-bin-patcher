@@ -2,15 +2,17 @@
     "section_name": ".rodata",
     "items":[
         {"old":"frida:rpc", "new":"#R5:rpc"},
-        {"old":"\u0000gmain\u0000", "new":""},
-        {"old":"\u0000gum-js-loop\u0000", "new":""},
-        {"old":"\u0000gdbus\u0000", "new":""}
+        {"old":"gmain\u0000", "new":""},
+        {"old":"gum-js-loop\u0000", "new":""},
+        {"old":"gdbus\u0000", "new":""}
     ]
 },{
     "section_name": ".text",
     "items":[
-        {"old":"\u0000gmain\u0000", "new":""},
-        {"old":"\u0000gum-js-loop\u0000", "new":""},
-        {"old":"\u0000gdbus\u0000", "new":""}
+        {"old":"FRIDA_PEER_SETUP_ACTIVE\u0000","new":""},
+        {"old":"frida-java-bridge\u0000","new":""},
+        {"old":"gmain\u0000", "new":""},
+        {"old":"gum-js-loop\u0000", "new":""},
+        {"old":"gdbus\u0000", "new":""}
     ]
 }]

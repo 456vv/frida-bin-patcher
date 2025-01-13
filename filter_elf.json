@@ -1,7 +1,8 @@
 { 
     "\"frida:rpc\"":"\"#R5:rpc\"",
-    "\u0000gmain\u0000":"",
-    "\u0000gum-js-loop\u0000":"",
-    "\u0000gdbus\u0000":""
+    "gmain\u0000":"",
+    "gum-js-loop\u0000":"",
+    "gdbus\u0000":"",
+    "FRIDA_PEER_SETUP_ACTIVE\u0000":""
 }
 

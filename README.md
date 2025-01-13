@@ -25,13 +25,13 @@ pip install -r requirements.txt -t src
 ```
 
 # 如何使用
-使用以下命令修补现有的 frida 二进制文件。1659 是版本号16.5.9
+使用以下命令修补现有的 frida 二进制文件。1661 是版本号16.6.1
 ```bash
-python main.py --input bin/frida-server --output bin/patched/frida-server --filter filter_elf.json --seed 1659
-python main.py --input /Python/Lib/site-packages/frida  --filter filter_py.json --seed 1659
+python main.py --input bin/frida-server --output bin/patched/frida-server --filter filter_elf.json --seed 1661
+python main.py --input /Python/Lib/site-packages/frida  --filter filter_py.json --seed 1661
 ```
 ```bash
-hexreplace.exe -input bin/frida-server -output bin/patched/frida-server -filter filter-elf.json -seed 1659
+hexreplace.exe -input bin/frida-server -output bin/patched/frida-server -filter filter-elf.json -seed 1661
 ```
 如果要使用导出验证系统，请使用以下命令。
 ```bash
