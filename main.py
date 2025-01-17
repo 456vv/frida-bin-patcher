@@ -12,7 +12,7 @@ class Main:
     parser.add_argument('-i','--input', type=str, nargs='?', help='location of frida binary to patch (server or gadget)')
     parser.add_argument('-o','--output', type=str, default="", help='output location for new binary')
     parser.add_argument('-v','--verify', action="store_true", help='enable verification')
-    parser.add_argument('-s','--seed', type=int, default=1659, help='random seed, can be frida vresion 1659')
+    parser.add_argument('-s','--seed', type=int, default=1661, help='random seed, can be frida vresion 1661')
     parser.add_argument('-r','--recover',action="store_true", help='recover')
     parser.add_argument('-f','--filter',type=str, default="", help='filter file')
     parser.add_argument('-e','--exclude',type=str, default="", help='exclude file')

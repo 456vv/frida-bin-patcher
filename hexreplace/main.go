@@ -258,7 +258,7 @@ func describeSubsystem(subsystem uint16) string {
 }
 
 var (
-	fseed   = flag.Int64("seed", 1659, "frida版本号")
+	fseed   = flag.Int64("seed", 1661, "frida版本号")
 	finput  = flag.String("input", "", "输入二进制文件")
 	ffilter = flag.String("filter", "", "过滤配置文件")
 	foutput = flag.String("output", "", "二进制文件输出")
